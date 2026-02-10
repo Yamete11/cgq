@@ -1,0 +1,40 @@
+/* Фиксируем Navbar сверху, растягиваем по ширине */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50; /* тёмно-синий фон */
+    color: #fff;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Контейнер для ссылок */
+.navbar-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+/* Стили ссылок */
+.nav-link {
+    text-decoration: none;
+    color: #ecf0f1; /* светлый текст */
+    font-weight: 500;
+    transition: color 0.2s, border-bottom 0.2s;
+    padding-bottom: 2px;
+}
+
+/* При наведении */
+.nav-link:hover {
+    color: #f39c12; /* оранжевый */
+    border-bottom: 2px solid #f39c12;
+}
+
+/* Активная страница */
+.nav-link.active {
+    color: #f39c12;
+    border-bottom: 2px solid #f39c12;
+}
