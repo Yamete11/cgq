@@ -1,6 +1,8 @@
 package com.example.demo.services;
 
+import com.example.demo.DTOs.OrderDTO;
 import com.example.demo.entities.*;
+import com.example.demo.mappers.OrderMapper;
 import com.example.demo.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class OrderService {
     private final InventoryService inventoryService;
     private final ProductService productService;
 
-    public Order createOrder(Long userId, List<Long> productIds) {
+    public OrderDTO createOrder(Long userId, List<Long> productIds) {
         Order order = new Order();
         order.setUserId(userId);
         order.setCreatedAt(LocalDateTime.now());
@@ -27,8 +29,12 @@ public class OrderService {
         BigDecimal total = BigDecimal.ZERO;
 
         for (Long productId : productIds) {
-            Product product = productService.getById(productId)
+            Product product = productService.getEntityById(productId)
                     .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            if (!inventoryService.isAvailable(product, 1)) {
+                throw new RuntimeException("Product " + product.getTitle() + " is out of stock");
+            }
 
             inventoryService.decrease(product, 1);
 
@@ -45,11 +51,13 @@ public class OrderService {
         order.setItems(items);
         order.setTotalPrice(total);
 
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+        return OrderMapper.toDTO(saved);
     }
 
-    public List<Order> getOrdersByUser(Long userId) {
-        return orderRepository.findByUserId(userId);
+    public List<OrderDTO> getOrdersByUser(Long userId) {
+        return orderRepository.findByUserId(userId).stream()
+                .map(OrderMapper::toDTO)
+                .toList();
     }
-
 }

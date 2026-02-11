@@ -1,6 +1,8 @@
 package com.example.demo.services;
 
+import com.example.demo.DTOs.ProductDTO;
 import com.example.demo.entities.Product;
+import com.example.demo.mappers.ProductMapper;
 import com.example.demo.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,23 +16,18 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public List<Product> getAll() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAll() {
+        List<Product> products = productRepository.findAll();
+        return ProductMapper.toDTOList(products);
     }
 
-    public Optional<Product> getById(Long id) {
+    public Optional<ProductDTO> getById(Long id) {
+        return productRepository.findById(id)
+                .map(ProductMapper::toDTO);
+    }
+
+    public Optional<Product> getEntityById(Long id) {
         return productRepository.findById(id);
     }
 
-    public Product create(Product product) {
-        return productRepository.save(product);
-    }
-
-    public Product update(Product product) {
-        return productRepository.save(product);
-    }
-
-    public void delete(Long id) {
-        productRepository.deleteById(id);
-    }
 }

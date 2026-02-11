@@ -26,9 +26,15 @@ public class InventoryService {
         return inventoryRepository.save(inventory);
     }
 
+    public boolean isAvailable(Product product, int amount) {
+        Inventory inventory = inventoryRepository.findByProduct(product)
+                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + product.getTitle()));
+        return inventory.getQuantity() >= amount;
+    }
+
     public void decrease(Product product, int amount) {
         Inventory inventory = inventoryRepository.findByProduct(product)
-                .orElseThrow(() -> new RuntimeException("Inventory not found for product"));
+                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + product.getTitle()));
         if (inventory.getQuantity() < amount) {
             throw new RuntimeException("Not enough stock for product: " + product.getTitle());
         }
